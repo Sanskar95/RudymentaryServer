@@ -1,8 +1,5 @@
 -module(rudy).
 
-%% ====================================================================
-%% API functions
-%% ====================================================================
 -export([init/1, start/1, stop/0]).
 
 init(Port) ->
@@ -30,7 +27,7 @@ request(Client) ->
   Recv = gen_tcp:recv(Client, 0),
   case Recv of
     {ok, Str} ->
-      Request = http:parse_request(Str),
+      Request = httpUtils:parseHttpRequest(Str),
       Response = reply(Request),
       gen_tcp:send(Client, Response);
     {error, Error} ->
@@ -40,13 +37,13 @@ request(Client) ->
 
 reply({{get, URI, _}, _, _}) ->
   case file:read_file("www/succesas.html") of
-    {ok, File}->http:ok(File);
+    {ok, File}-> httpUtils:success(File);
     {error,Error}->replyWithFailure()
   end.
 
 replyWithFailure()->
   {ok, File} = file:read_file("www/failure.html"),
-  http:ok(File).
+  httpUtils:success(File).
 
 
 start(Port) ->
@@ -54,7 +51,3 @@ start(Port) ->
 stop() ->
   exit(whereis(rudy), "time to die").
 
-
-%% ====================================================================
-%% Internal functions
-%% ====================================================================
