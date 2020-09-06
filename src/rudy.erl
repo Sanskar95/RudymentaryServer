@@ -10,7 +10,7 @@ init(Port) ->
 
       gen_tcp:close(Listen),
       ok;
-    {error, Error} ->
+    {error, _Error} ->
       error
   end.
 
@@ -19,7 +19,7 @@ handler(Listen) ->
     {ok, Client} ->
       request(Client),
       handler(Listen);
-    {error, Error} ->
+    {error, _Error} ->
       error
   end.
 
@@ -30,15 +30,15 @@ request(Client) ->
       Request = httpUtils:parseHttpRequest(Str),
       Response = reply(Request),
       gen_tcp:send(Client, Response);
-    {error, Error} ->
+    {error, _Error} ->
       error
   end,
   gen_tcp:close(Client).
 
-reply({{get, URI, _}, _, _}) ->
-  case file:read_file("www/succesas.html") of
+reply({{get, _URI, _}, _, _}) ->
+  case file:read_file("www/success.html") of
     {ok, File}-> httpUtils:success(File);
-    {error,Error}->replyWithFailure()
+    {error, _Error}->replyWithFailure()
   end.
 
 replyWithFailure()->
