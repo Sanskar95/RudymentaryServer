@@ -36,10 +36,12 @@ request(Client) ->
   gen_tcp:close(Client).
 
 reply({{get, _URI, _}, _, _}) ->
-  case file:read_file("www/success.html") of
-    {ok, File}-> httpUtils:success(File);
-    {error, _Error}->replyWithFailure()
-  end.
+  httpUtils:success("Awesome").
+%%  timer:sleep(40),
+%%  case file:read_file("www/success.html") of
+%%    {ok, File}-> httpUtils:success(File);
+%%    {error, _Error}->replyWithFailure()
+%%  end.
 
 replyWithFailure()->
   {ok, File} = file:read_file("www/failure.html"),
